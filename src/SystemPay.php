@@ -43,37 +43,68 @@ class SystemPay
     private $version = "V2";
     private $redirectSuccessMessage = "Redirection...";
     private $redirectErrorMessage = "Redirection...";
+    private $language = NULL;
+    private $shopUrl;
+
+    private $additionnalsConfig = [];
 
     public function setSiteId($siteId)
     {
         $this->siteId = $siteId;
+
         return $this;
     }
 
     public function setTestKey($testKey)
     {
         $this->testKey = $testKey;
+
         return $this;
     }
 
     public function setProductionKey($productionKey)
     {
         $this->productionKey = $productionKey;
+
         return $this;
     }
 
     public function setProductionMode(bool $productionMode)
     {
         $this->isProductionMode = $productionMode;
+
         return $this;
     }
 
     public function setReturnUrl(string $returnUrl)
     {
         $this->returnUrl = $returnUrl;
+
+        return $this;
     }
 
-    public function createTransaction(int $amount = 1000, int $currency = 978)
+    public function setLanguage(string $i18n)
+    {
+        $this->language = $i18n;
+
+        return $this;
+    }
+
+    public function setShopUrl(string $shopUrl)
+    {
+        $this->shopUrl = $shopUrl;
+
+        return $this;
+    }
+
+    public function setConfigValue(string $key, $value)
+    {
+        $this->additionnalsConfig[$key] = $value;
+
+        return $this;
+    }
+
+    public function createTransaction(int $amount = 1000, string $currency = self::CURRENCY_EUR)
     {
         $this->transaction = new Transaction();
         $this->transaction->generateId();
@@ -106,8 +137,18 @@ class SystemPay
             'trans_id' => $this->transaction->id,
             'trans_date' => $this->transaction->date
         ];
+        if ($this->language != NULL) {
+            $fields['language'] = $this->language;
+        }
+        if ($this->shopUrl != NULL) {
+            $fields['shop_url'] = $this->shopUrl;
+        }
+        foreach ($this->additionnalsConfig as $key => $value) {
+            $fields[$key] = $value;
+        }
         $fields = $this->mapPrefix($fields);
         $fields['signature'] = ($this->generateSignature($fields));
+
         return $fields;
     }
 
@@ -118,6 +159,7 @@ class SystemPay
         foreach ($fields as $key => $value) {
             $html .= "\r\n" . "<input type='hidden' name='$key' value='" . $value . "' />";
         }
+
         return $html;
     }
 
@@ -142,6 +184,7 @@ class SystemPay
         foreach ($fields as $field => $value) {
             $result[sprintf('vads_%s', $field)] = $value;
         }
+
         return $result;
     }
 
@@ -153,51 +196,51 @@ class SystemPay
     public function processReturn($fields)
     {
         /**
-        {vads_amount:'1500',
-        vads_auth_mode:'FULL',
-        vads_auth_number:'3fe6f6',
-        vads_auth_result:'00',
-        vads_capture_delay:'0',
-        vads_card_brand:'CB',
-        vads_card_number:'497010XXXXXX
-        vads_payment_certificate:'cae0
-        33da5db54b18e',
-        vads_ctx_mode:'TEST',
-        vads_currency:'978',
-        vads_effective_amount:'1500',
-        vads_effective_currency:'978',
-        vads_site_id:'18058478',
-        vads_trans_date:'2019041914480
-        vads_trans_id:'262401',
-        vads_trans_uuid:'2a53d46fb50e4
-        vads_validation_mode:'0',
-        vads_version:'V2',
-        vads_warranty_result:'YES',
-        vads_payment_src:'EC',
-        vads_sequence_number:'1',
-        vads_contract_used:'8933264',
-        vads_threeds_cavv:'Q2F2dkNhdnZ
-        vads_threeds_eci:'05',
-        vads_threeds_xid:'MFp2enNPcU8z
-        vads_threeds_cavvAlgorithm:'2'
-        vads_threeds_status:'Y',
-        vads_threeds_sign_valid:'1',
-        vads_threeds_error_code:'',
-        vads_threeds_exit_status:'10',
-        vads_result:'00',
-        vads_extra_result:'',
-        vads_card_country:'FR',
-        vads_language:'en',
-        vads_brand_management:'{"userC
-        ":"CB|VISA","brand":"CB"}',
-        vads_hash:
-        'ca0b8a7dc0e9c0be9dd63ac235497
-        63fcdb1eb27f',
-        vads_url_check_src:'PAY',
-        vads_action_mode:'INTERACTIVE'
-        vads_payment_config:'SINGLE',
-        vads_page_action:'PAYMENT',
-        signature:'Vf7zRX/ZYLjqXtk1MGxk='}
+         * {vads_amount:'1500',
+         * vads_auth_mode:'FULL',
+         * vads_auth_number:'3fe6f6',
+         * vads_auth_result:'00',
+         * vads_capture_delay:'0',
+         * vads_card_brand:'CB',
+         * vads_card_number:'497010XXXXXX
+         * vads_payment_certificate:'cae0
+         * 33da5db54b18e',
+         * vads_ctx_mode:'TEST',
+         * vads_currency:'978',
+         * vads_effective_amount:'1500',
+         * vads_effective_currency:'978',
+         * vads_site_id:'18058478',
+         * vads_trans_date:'2019041914480
+         * vads_trans_id:'262401',
+         * vads_trans_uuid:'2a53d46fb50e4
+         * vads_validation_mode:'0',
+         * vads_version:'V2',
+         * vads_warranty_result:'YES',
+         * vads_payment_src:'EC',
+         * vads_sequence_number:'1',
+         * vads_contract_used:'8933264',
+         * vads_threeds_cavv:'Q2F2dkNhdnZ
+         * vads_threeds_eci:'05',
+         * vads_threeds_xid:'MFp2enNPcU8z
+         * vads_threeds_cavvAlgorithm:'2'
+         * vads_threeds_status:'Y',
+         * vads_threeds_sign_valid:'1',
+         * vads_threeds_error_code:'',
+         * vads_threeds_exit_status:'10',
+         * vads_result:'00',
+         * vads_extra_result:'',
+         * vads_card_country:'FR',
+         * vads_language:'en',
+         * vads_brand_management:'{"userC
+        * ":"CB|VISA","brand":"CB"}',
+        * vads_hash:
+         * 'ca0b8a7dc0e9c0be9dd63ac235497
+         * 63fcdb1eb27f',
+         * vads_url_check_src:'PAY',
+         * vads_action_mode:'INTERACTIVE'
+         * vads_payment_config:'SINGLE',
+         * vads_page_action:'PAYMENT',
+         * signature:'Vf7zRX/ZYLjqXtk1MGxk='}
          */
         $providedSignature = $fields['signature'];
         unset($fields['signature']);
