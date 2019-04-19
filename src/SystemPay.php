@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Lefuturiste\SystemPay;
 
 /**
  * Documentation EN https://paiement.systempay.fr/doc/en-EN/form-payment/quick-start-guide/tla1427193445290.pdf
@@ -87,9 +87,9 @@ class SystemPay
         return $this;
     }
 
-    public function setLanguage(string $i18n)
+    public function setLanguage(string $language)
     {
-        $this->language = $i18n;
+        $this->language = $language;
 
         return $this;
     }
