@@ -46,7 +46,7 @@ class SystemPay
     private $language = NULL;
     private $shopUrl;
 
-    private $additionnalsConfig = [];
+    private $additionalConfig = [];
 
     public function setSiteId($siteId)
     {
@@ -99,7 +99,7 @@ class SystemPay
 
     public function setConfigValue(string $key, $value)
     {
-        $this->additionnalsConfig[$key] = $value;
+        $this->additionalConfig[$key] = $value;
 
         return $this;
     }
@@ -143,7 +143,7 @@ class SystemPay
         if ($this->shopUrl != NULL) {
             $fields['shop_url'] = $this->shopUrl;
         }
-        foreach ($this->additionnalsConfig as $key => $value) {
+        foreach ($this->additionalConfig as $key => $value) {
             $fields[$key] = $value;
         }
         $fields = $this->mapPrefix($fields);
