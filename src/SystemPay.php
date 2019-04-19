@@ -32,19 +32,23 @@ class SystemPay
      */
     private $transaction;
 
-    private $siteId;
-    private $testKey;
-    private $productionKey;
+    private $siteId = "";
+    private $testKey = "";
+    private $productionKey = "";
     private $isProductionMode = false;
-    private $returnUrl;
     private $actionMode = "INTERACTIVE";
     private $pageAction = "PAYMENT";
     private $paymentConfig = "SINGLE";
     private $version = "V2";
-    private $redirectSuccessMessage = "Redirection...";
-    private $redirectErrorMessage = "Redirection...";
+    private $returnMode = NULL;
     private $language = NULL;
-    private $shopUrl;
+    private $shopUrl = NULL;
+    private $returnUrl = NULL;
+    private $errorUrl = NULL;
+    private $referralUrl = NULL;
+    private $refusedUrl = NULL;
+    private $cancelUrl = NULL;
+    private $successUrl = NULL;
 
     private $additionalConfig = [];
 
@@ -97,11 +101,24 @@ class SystemPay
         return $this;
     }
 
+    /* NONE|GET|POST */
+    public function setReturnMode(string $mode)
+    {
+        $this->returnMode = $mode;
+
+        return $this;
+    }
+
     public function setConfigValue(string $key, $value)
     {
         $this->additionalConfig[$key] = $value;
 
         return $this;
+    }
+
+    public function getAdditionalConfigValues()
+    {
+        return $this->additionalConfig;
     }
 
     public function createTransaction(int $amount = 1000, string $currency = self::CURRENCY_EUR)
@@ -129,9 +146,6 @@ class SystemPay
             'payment_config' => $this->paymentConfig,
             'site_id' => $this->siteId,
             'version' => $this->version,
-            'redirect_success_message' => $this->redirectSuccessMessage,
-            'redirect_error_message' => $this->redirectErrorMessage,
-            'url_return' => $this->returnUrl,
             'amount' => $this->transaction->amount,
             'currency' => $this->transaction->currency,
             'trans_id' => $this->transaction->id,
@@ -142,6 +156,27 @@ class SystemPay
         }
         if ($this->shopUrl != NULL) {
             $fields['shop_url'] = $this->shopUrl;
+        }
+        if ($this->returnUrl != NULL) {
+            $fields['url_return'] = $this->returnUrl;
+        }
+        if ($this->errorUrl != NULL) {
+            $fields['url_error'] = $this->errorUrl;
+        }
+        if ($this->referralUrl != NULL) {
+            $fields['url_referral'] = $this->referralUrl;
+        }
+        if ($this->refusedUrl != NULL) {
+            $fields['url_refused'] = $this->refusedUrl;
+        }
+        if ($this->successUrl != NULL) {
+            $fields['url_success'] = $this->successUrl;
+        }
+        if ($this->cancelUrl != NULL) {
+            $fields['url_cancel'] = $this->cancelUrl;
+        }
+        if ($this->returnMode != NULL) {
+            $fields['return_mode'] = $this->returnMode;
         }
         foreach ($this->additionalConfig as $key => $value) {
             $fields[$key] = $value;
