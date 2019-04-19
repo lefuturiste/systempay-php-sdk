@@ -3,15 +3,18 @@
  * WORK IN PROGRESS EXAMPLE
  */
 
-use App\SystemPay;
+use Lefuturiste\SystemPay\SystemPay;
 
 require '../vendor/autoload.php';
 
 $systemPay = new SystemPay();
-$systemPay->setSiteId('YOUR_SITE_ID');
+$systemPay->setSiteId('XXX');
 $systemPay->setProductionMode(false);
-$systemPay->setTestKey('YOUR_TEST_KEY'); // or certificate
+$systemPay->setTestKey('XXX'); // or certificate
 $systemPay->setReturnUrl('http://example.com/return');
+$systemPay->setShopUrl('http://lefuturiste.fr');
+$systemPay->setLanguage('fr');
+$systemPay->setReturnMode('GET');
 
 if ($_SERVER['REQUEST_URI'] === '/') {
     // create a payment
