@@ -14,6 +14,19 @@ class SystemPay
 
     private const PAYMENT_URL = "https://systempay.cyberpluspaiement.com/vads-payment/";
 
+    public const CURRENCY_AUD = '036';
+    public const CURRENCY_CAD = '124';
+    public const CURRENCY_CNY = '156';
+    public const CURRENCY_DKK = '208';
+    public const CURRENCY_JPY = '392';
+    public const CURRENCY_NOK = '578';
+    public const CURRENCY_SEK = '752';
+    public const CURRENCY_CHF = '756';
+    public const CURRENCY_GBP = '826';
+    public const CURRENCY_USD = '840';
+    public const CURRENCY_XPF = '953';
+    public const CURRENCY_EUR = '978';
+
     /**
      * @var Transaction
      */
