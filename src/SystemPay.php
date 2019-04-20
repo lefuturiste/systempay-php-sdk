@@ -228,6 +228,11 @@ class SystemPay
         return $this->isProductionMode ? $this->productionKey : $this->testKey;
     }
 
+    public function getTransaction(): Transaction
+    {
+        return $this->transaction;
+    }
+
     public function processReturn($fields)
     {
         /**
